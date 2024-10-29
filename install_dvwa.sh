@@ -74,8 +74,8 @@ cd DVWA/config || { echo "Failed to change directory to DVWA/config. Exiting."; 
 sudo cp config.inc.php.dist config.inc.php
 
 echo "Editing the DVWA config file with provided MySQL credentials..."
-sudo sed -i "s/'db_user'/'db_user', '$MYSQL_USER'/g" config.inc.php
-sudo sed -i "s/'db_password'/'db_password', '$MYSQL_PASSWORD'/g" config.inc.php
+# sudo sed -i "s/'db_user'/'db_user', '$MYSQL_USER'/g" config.inc.php
+# sudo sed -i "s/'db_password'/'db_password', '$MYSQL_PASSWORD'/g" config.inc.php
 
 echo ""
 echo ""
