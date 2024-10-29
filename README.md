@@ -41,7 +41,10 @@ cd DVWA-QuickDeploy
 ### Run the Script
 
 ```bash
-sudo ./install_dvwa.sh [-u mysql_user] [-p mysql_password] [-d db_name] [-r restart_services] [-s custom_permissions]
+sudo ./install_dvwa.sh
+
+
+[-u mysql_user] [-p mysql_password] [-d db_name] [-r restart_services] [-s custom_permissions]
 ```
 
 ### Example
@@ -87,7 +90,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-Sabih Uddin Qureshi  
-Contributions by: ChatGPT
+Sabih Qureshi (HexMan)
 
 Feel free to contribute by submitting issues or pull requests to enhance this quick deployment solution.
