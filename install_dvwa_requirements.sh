@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# DVWA Installation Script for Kali Linux - Fully Automated
+# DVWA Installation Script for Kali Linux - Fully Automated with Dependencies
 # Author: Sabih Qureshi
-# This script installs DVWA, configures MySQL, sets up the Apache server, and performs additional checks.
+# This script installs required dependencies, DVWA, configures MySQL, sets up the Apache server, and performs additional checks.
+
 
 # Function to display usage and help
 usage() {
@@ -44,13 +45,18 @@ while getopts "u:p:d:r:s:h" option; do
     esac
 done
 
-# Step 1: Display banner
+# Step 1: Install required dependencies
+echo "Installing required dependencies..."
+sudo apt-get update > /dev/null 2>&1
+sudo apt-get install -y apache2 mysql-server php php-mysqli git > /dev/null 2>&1
+
+# Step 2: Display banner
 display_banner
 
 echo ""
 echo ""
 
-# Step 2: Download DVWA
+# Step 3: Download DVWA
 DVWA_DIR="/var/www/html/DVWA"
 if [ -d "$DVWA_DIR" ]; then
     echo "DVWA directory already exists. Removing existing directory..."
@@ -65,7 +71,7 @@ echo "DVWA repository cloned successfully."
 echo ""
 echo ""
 
-# Step 3: Configure DVWA - Set permissions and config file
+# Step 4: Configure DVWA - Set permissions and config file
 echo "Setting permissions for DVWA directory..."
 sudo chmod -R $PERMISSIONS DVWA/
 
@@ -80,7 +86,7 @@ sudo sed -i "s/'db_password'/'db_password', '$MYSQL_PASSWORD'/g" config.inc.php
 echo ""
 echo ""
 
-# Step 4: Configure Database - Start MySQL and set up the database
+# Step 5: Configure Database - Start MySQL and set up the database
 echo "Starting MySQL service..."
 sudo systemctl start mysql > /dev/null 2>&1
 sudo systemctl status mysql | grep Active
@@ -106,7 +112,7 @@ MYSQL_SCRIPT
 echo ""
 echo ""
 
-# Step 5: Configure Apache Server
+# Step 6: Configure Apache Server
 PHP_VERSION=$(ls /etc/php/ | grep -oP '^[0-9]+\.[0-9]+')
 
 if [[ -n "$PHP_VERSION" ]]; then
