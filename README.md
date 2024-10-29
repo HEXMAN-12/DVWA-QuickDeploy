@@ -41,6 +41,7 @@ cd DVWA-QuickDeploy
 ### Run the Script
 
 ```bash
+chmod +x install_dvwa.sh
 sudo ./install_dvwa.sh
 
 
