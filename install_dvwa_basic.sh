@@ -157,4 +157,7 @@ echo "[*] Installation complete. Access DVWA at http://$IP_ADDRESS/DVWA/setup.ph
 echo "[*] Open the URL in your browser and click 'Create / Reset Database' to finish setup."
 
 echo "[*] Default login: Username - admin, Password - password"
+echo ""
+echo ""
+echo "Script by Sabih Qureshi"
 
