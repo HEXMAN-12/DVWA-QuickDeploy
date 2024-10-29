@@ -34,7 +34,7 @@ To use the DVWA installation script, clone the repository and run the script wit
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/YourUsername/DVWA-QuickDeploy.git
+git clone https://github.com/HEXMAN-12/DVWA-QuickDeploy.git
 cd DVWA-QuickDeploy
 ```
 

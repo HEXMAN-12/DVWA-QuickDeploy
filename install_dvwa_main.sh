@@ -1,11 +1,8 @@
 #!/bin/bash
+
 # DVWA Installation Script for Kali Linux - Fully Automated
 # Author: Sabih Qureshi
 # This script installs DVWA, configures MySQL, sets up the Apache server, and performs additional checks.
-
-# Exit immediately if a command fails and log all commands executed for better debugging
-set -e
-set -x
 
 # Function to display usage and help
 usage() {
@@ -17,6 +14,14 @@ usage() {
     echo "  -r    Restart services after installation (default: true)"
     echo "  -s    Custom directory permissions (default: 777)"
     exit 1
+}
+
+# Function to display banner
+display_banner() {
+    echo "  ┌───────────────────────────────────────┐"
+    echo "  │        DVWA Automated Installer       │"
+    echo "  └───────────────────────────────────────┘"
+    sleep 2
 }
 
 # Default values for options
@@ -39,56 +44,58 @@ while getopts "u:p:d:r:s:h" option; do
     esac
 done
 
-# Step 1: Download DVWA
+# Step 1: Display banner
+display_banner
+
+echo ""
+echo ""
+
+# Step 2: Download DVWA
 DVWA_DIR="/var/www/html/DVWA"
 if [ -d "$DVWA_DIR" ]; then
-    echo "[*] DVWA directory already exists. Removing existing directory..."
+    echo "DVWA directory already exists. Removing existing directory..."
     sudo rm -rf "$DVWA_DIR"
 fi
 
-echo "[*] Cloning DVWA repository to /var/www/html..."
-cd /var/www/html/ || exit
-sudo git clone https://github.com/digininja/DVWA
+echo "Cloning DVWA repository to /var/www/html..."
+cd /var/www/html/ || { echo "Failed to change directory to /var/www/html. Exiting."; exit 1; }
+sudo git clone https://github.com/digininja/DVWA > /dev/null 2>&1
+echo "DVWA repository cloned successfully."
 
-# Step 2: Configure DVWA - Set permissions and config file
-echo "[*] Setting permissions for DVWA directory..."
+echo ""
+echo ""
+
+# Step 3: Configure DVWA - Set permissions and config file
+echo "Setting permissions for DVWA directory..."
 sudo chmod -R $PERMISSIONS DVWA/
 
-echo "[*] Copying default configuration to config.inc.php..."
-cd DVWA/config || exit
+echo "Copying default configuration to config.inc.php..."
+cd DVWA/config || { echo "Failed to change directory to DVWA/config. Exiting."; exit 1; }
 sudo cp config.inc.php.dist config.inc.php
 
-echo "[*] Editing the DVWA config file with provided MySQL credentials..."
+echo "Editing the DVWA config file with provided MySQL credentials..."
 sudo sed -i "s/'db_user'/'db_user', '$MYSQL_USER'/g" config.inc.php
 sudo sed -i "s/'db_password'/'db_password', '$MYSQL_PASSWORD'/g" config.inc.php
 
-# Step 3: Configure Database - Start MySQL and set up the database
-echo "[*] Starting MySQL service..."
-sudo systemctl start mysql
+echo ""
+echo ""
+
+# Step 4: Configure Database - Start MySQL and set up the database
+echo "Starting MySQL service..."
+sudo systemctl start mysql > /dev/null 2>&1
 sudo systemctl status mysql | grep Active
 
-# Check if the database exists and drop it before creating
-echo "[*] Checking if DVWA database exists..."
+echo "Checking if DVWA database exists..."
 DB_EXISTS=$(sudo mysql -u root -e "SHOW DATABASES LIKE '$DB_NAME';")
 
-echo "[*] Database check result: $DB_EXISTS"
-
 if echo "$DB_EXISTS" | grep -w "$DB_NAME" > /dev/null; then
-    echo "[*] Database '$DB_NAME' already exists. Dropping database..."
-    sudo mysql -u root -e "DROP DATABASE $DB_NAME;"
+    echo "Database '$DB_NAME' already exists. Dropping database..."
+    sudo mysql -u root -e "DROP DATABASE $DB_NAME;" > /dev/null 2>&1
 else
-    echo "[*] Database '$DB_NAME' does not exist. Proceeding with setup..."
+    echo "Database '$DB_NAME' does not exist. Proceeding with setup..."
 fi
 
-# Check if the user exists and drop it before creating
-USER_EXISTS=$(sudo mysql -u root -e "SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = '$MYSQL_USER' AND host = '127.0.0.1');" | tail -n 1)
-
-if [ "$USER_EXISTS" -eq 1 ]; then
-    echo "[*] MySQL user '$MYSQL_USER' already exists. Dropping user..."
-    sudo mysql -u root -e "DROP USER '$MYSQL_USER'@'127.0.0.1';"
-fi
-
-echo "[*] Setting up DVWA database in MySQL..."
+echo "Setting up DVWA database in MySQL..."
 sudo mysql -u root <<MYSQL_SCRIPT
 CREATE USER '$MYSQL_USER'@'127.0.0.1' IDENTIFIED BY '$MYSQL_PASSWORD';
 CREATE DATABASE $DB_NAME;
@@ -96,32 +103,45 @@ GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$MYSQL_USER'@'127.0.0.1';
 FLUSH PRIVILEGES;
 MYSQL_SCRIPT
 
-# Step 4: Configure Apache Server
+echo ""
+echo ""
+
+# Step 5: Configure Apache Server
 PHP_VERSION=$(ls /etc/php/ | grep -oP '^[0-9]+\.[0-9]+')
 
 if [[ -n "$PHP_VERSION" ]]; then
-    echo "[*] PHP version detected: $PHP_VERSION"
+    echo "PHP version detected: $PHP_VERSION"
 else
-    echo "[!] PHP version not found! Exiting."
+    echo "PHP version not found! Exiting."
     exit 1
 fi
 
-echo "[*] Editing PHP configuration file..."
+echo "Editing PHP configuration file..."
 sudo sed -i "s/allow_url_fopen = .*/allow_url_fopen = On/g" /etc/php/$PHP_VERSION/apache2/php.ini
 sudo sed -i "s/allow_url_include = .*/allow_url_include = On/g" /etc/php/$PHP_VERSION/apache2/php.ini
 
-echo "[*] Starting Apache server..."
-sudo systemctl start apache2
+echo "Starting Apache server..."
+sudo systemctl start apache2 > /dev/null 2>&1
 sudo systemctl status apache2 | grep Active
+
+echo ""
+echo ""
 
 # Optionally restart services
 if [ "$RESTART_SERVICES" = true ]; then
-    echo "[*] Restarting Apache and MySQL services..."
-    sudo systemctl restart apache2 mysql
+    echo "Restarting Apache and MySQL services..."
+    sudo systemctl restart apache2 mysql > /dev/null 2>&1
 fi
 
-# Step 5: Access DVWA
-IP_ADDRESS=$(hostname -I | awk '{print $1}')
-echo "[*] Installation complete. Access DVWA at http://$IP_ADDRESS/DVWA/setup.php"
-echo "[*] Open the URL in your browser and click 'Create / Reset Database' to finish setup."
-echo "[*] Default login: Username - admin, Password - password"
+echo ""
+echo ""
+echo "  ┌───────────────────────────────────────────────────────────────────┐"
+echo "  │                    DVWA Installation Successful!                  │"
+echo "  │ Access DVWA at http://$(hostname -I | awk '{print $1}')/DVWA/setup.php                  │"
+echo "  │ Open the URL in your browser and click 'Create / Reset Database'  │"
+echo "  │ to finish setup.                                                  │"
+echo "  │ Default login: Username - admin, Password - password              │"
+echo "  └───────────────────────────────────────────────────────────────────┘"
+echo ""
+echo "                                Built By Sabih Qureshi."
+echo ""
