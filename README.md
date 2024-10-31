@@ -44,6 +44,7 @@ cd DVWA-QuickDeploy
 chmod +x install_dvwa.sh
 sudo ./install_dvwa.sh
 ```
+You should now have a working Installation at http://<your-ip-address>/DVWA/setup.php 
 
 ### Additional Arguments
 
