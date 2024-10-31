@@ -9,22 +9,22 @@ This repository contains a fully automated bash script for installing and config
 - **Apache Configuration**: Updates PHP settings to allow `allow_url_fopen` and `allow_url_include`.
 - **Customizable**: Allows user input for MySQL credentials, database name, and directory permissions.
 - **Error Handling**: Built-in checks to handle pre-existing databases, users, and services.
-- **Service Management**: Optionally restart Apache and MySQL services after setup.
+- **Service Management**: Optionally restarts Apache and MySQL services after setup.
 
-## Prerequisites
+## Additional Dependencies
 
-Before running the script, ensure you have the following installed on your Kali Linux system:
+These dependencies come installed by default with Kali Linux:
 
 - Apache
 - MySQL
 - PHP
 - Git
 
-### Installation of Required Packages
+However, if they are not present they can be installed using the following commands.
 
 ```bash
 sudo apt update
-sudo apt install apache2 mysql-server php php-mysql git -y
+sudo apt install apache2 php php-mysql git -y
 ```
 
 ## Usage
@@ -43,8 +43,11 @@ cd DVWA-QuickDeploy
 ```bash
 chmod +x install_dvwa.sh
 sudo ./install_dvwa.sh
+```
 
+### Additional Arguments
 
+```bash
 [-u mysql_user] [-p mysql_password] [-d db_name] [-r restart_services] [-s custom_permissions]
 ```
 
