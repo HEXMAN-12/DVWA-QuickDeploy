@@ -45,7 +45,6 @@ chmod +x install_dvwa.sh
 sudo ./install_dvwa.sh
 ```
 
-## Advanced Usage
 ### Additional Arguments
 
 ```bash
