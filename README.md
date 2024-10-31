@@ -11,7 +11,7 @@ This repository contains a fully automated bash script for installing and config
 - **Error Handling**: Built-in checks to handle pre-existing databases, users, and services.
 - **Service Management**: Optionally restarts Apache and MySQL services after setup.
 
-## Additional Dependencies
+## Dependencies
 
 These dependencies come installed by default with Kali Linux:
 
