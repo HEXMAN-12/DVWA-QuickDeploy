@@ -145,3 +145,5 @@ echo "  └───────────────────────
 echo ""
 echo "                                Built By Sabih Qureshi."
 echo ""
+
+#unix fix
